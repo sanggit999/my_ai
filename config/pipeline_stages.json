@@ -1,0 +1,20 @@
+{
+  "head": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "role": "Planner & Architect",
+    "prompt_template": "Bạn là Software Architect và Chuyên gia Lập Kế Hoạch. Với yêu cầu sau: '{input}', hãy phân tích kỹ lưỡng, bóc tách các yêu cầu cốt lõi và lập đề cương/dàn ý kiến trúc kỹ thuật chuẩn xác, rõ ràng từng phần để Chặng tiếp theo triển khai code/nội dung."
+  },
+  "body": {
+    "provider": "gemini",
+    "model": "gemini-3.1-flash-lite",
+    "role": "Core Implementer",
+    "prompt_template": "Dựa trên dàn ý kiến trúc từ Chặng ĐẦU sau:\n{previous_output}\n\nvà yêu cầu gốc: '{input}', bạn là Kỹ Sư Cốt Lõi (Core Implementer). Hãy triển khai toàn bộ giải pháp chi tiết, viết mã nguồn hoàn chỉnh chuẩn công nghiệp (có xử lý ngoại lệ, chú thích) hoặc nội dung chuyên sâu nhất."
+  },
+  "tail": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "role": "Auditor & Polisher",
+    "prompt_template": "Bạn là Senior Code Reviewer & Quality Auditor. Hãy đọc toàn bộ bản thảo từ Chặng THÂN sau:\n{previous_output}\n\n1. Kiểm toán rà soát lỗi logic, lỗ hổng bảo mật, bắt các edge cases tiềm tàng.\n2. Tối ưu hiệu năng và trau chuốt xuất bản phiên bản hoàn hảo, sắc sảo nhất với định dạng Markdown chuyên nghiệp."
+  }
+}
