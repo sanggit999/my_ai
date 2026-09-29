@@ -18,7 +18,8 @@ Hệ thống tài liệu thiết kế và lộ trình phát triển cho **Multi-
 | **Phase 8** | [Phase 8: AI Orchestrator](file:///D:/my_ai/docs/phase-8-ai-orchestrator.md) | Bộ điều phối trung tâm: Song song (Arena), Tự động dự phòng (Failover), Định tuyến. |
 | **Phase 9** | [Phase 9: Role Assignment & Personas](file:///D:/my_ai/docs/phase-9-role-assignment-personas.md) | Phân vai chuyên môn (Hội đồng chuyên gia, Cấu hình con nào làm việc gì, Dây chuyền tuần tự). |
 | **Phase 9.1** | [Phase 9.1: Per-API Model Switcher](file:///D:/my_ai/docs/phase-9-1-model-switcher.md) | Quản lý & chuyển đổi model đang hoạt động độc lập cho từng API (Groq, Gemini, OpenAI, Claude). |
-| **Phase 10** | [Phase 10: 3-Stage Pipeline (Đầu - Thân - Cuối)](file:///D:/my_ai/docs/phase-10-three-stage-pipeline.md) | Thiết lập cấu hình cố định/linh hoạt: Con ĐẦU lập dàn ý, Con THÂN triển khai, Con CUỐI trau chuốt. |
+| **Phase 10** | [Phase 10: 3-Stage Pipeline (Đầu - Thân - Cuối)](file:///D:/my_ai/docs/phase-10-three-stage-pipeline.md) | Thiết lập cấu hình cố định/linh hoạt: Con ĐẦU lập dàn ý, Con THÂN triển khai, Con CUỐI trau chuốt (Active-Survivor Failover). |
+| **Phase 11** | [Phase 11: Hybrid UI/UX (Terminal TUI & Web Studio)](file:///D:/my_ai/docs/phase-11-terminal-tui-and-web-studio.md) | Trải nghiệm giao diện đa nền tảng: Terminal TUI bo tròn màu sắc & Local Web Studio Dashboard (SPA Glassmorphism). |
 
 ---
 

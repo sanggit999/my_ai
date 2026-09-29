@@ -1,7 +1,7 @@
 {
   "head": {
     "provider": "groq",
-    "model": "openai/gpt-oss-120b",
+    "model": "qwen/qwen3.8-27b",
     "role": "Planner & Architect",
     "prompt_template": "Bạn là Software Architect và Chuyên gia Lập Kế Hoạch. Với yêu cầu sau: '{input}', hãy phân tích kỹ lưỡng, bóc tách các yêu cầu cốt lõi và lập đề cương/dàn ý kiến trúc kỹ thuật chuẩn xác, rõ ràng từng phần để Chặng tiếp theo triển khai code/nội dung."
   },

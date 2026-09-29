@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-AI Studio — Dây Chuyền 3 Chặng Tự Phục Hồi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <span class="brand-title">Multi-AI Studio</span>
+        <span class="brand-tag">Active-Survivor Pipeline</span>
+      </div>
+    </div>
+    <div class="nav-status" id="navStatus">
+      <div class="status-badge" id="badge-groq"><span class="dot"></span> Groq: Đang nạp...</div>
+      <div class="status-badge" id="badge-gemini"><span class="dot"></span> Gemini: Đang nạp...</div>
+      <div class="status-badge" id="badge-openai"><span class="dot"></span> OpenAI: Đang nạp...</div>
+      <div class="status-badge" id="badge-anthropic"><span class="dot"></span> Claude: Đang nạp...</div>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-secondary btn-sm" id="btnRefreshStatus" title="Làm mới trạng thái">🔄 Làm mới</button>
+      <button class="btn btn-primary btn-sm" id="btnOpenSetupModal">⚙️ Cấu hình Chặng</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- Flowchart Visualizer -->
+    <section class="pipeline-flow-card">
+      <div class="flow-header">
+        <div class="flow-title">
+          <span class="icon">⛓️</span> DÂY CHUYỀN 3 CHẶNG TỰ PHỤC HỒI (ACTIVE-SURVIVOR ARCHITECTURE)
+        </div>
+        <div class="flow-rule-badge">
+          🛡️ Nguyên tắc: Con nào chết (429/400/503) ➔ Con sống nhảy vào gánh!
+        </div>
+      </div>
+
+      <div class="flow-diagram">
+        <!-- Node 1: ĐẦU -->
+        <div class="flow-node" id="node-head" onclick="openStageSetup('head')">
+          <div class="node-badge">Chặng 1</div>
+          <div class="node-icon">📐</div>
+          <div class="node-name">ĐẦU (Architect)</div>
+          <div class="node-role">Kế hoạch & Dàn ý</div>
+          <div class="node-model" id="label-head-model">groq : openai/gpt-oss-120b</div>
+          <div class="node-status" id="status-head">Sẵn sàng</div>
+        </div>
+
+        <div class="flow-arrow" id="arrow-1">
+          <div class="arrow-line"></div>
+          <div class="arrow-head">▶</div>
+        </div>
+
+        <!-- Node 2: THÂN -->
+        <div class="flow-node" id="node-body" onclick="openStageSetup('body')">
+          <div class="node-badge">Chặng 2</div>
+          <div class="node-icon">💻</div>
+          <div class="node-name">THÂN (Implementer)</div>
+          <div class="node-role">Mã nguồn & Cốt lõi</div>
+          <div class="node-model" id="label-body-model">gemini : gemini-3.1-flash-lite</div>
+          <div class="node-status" id="status-body">Sẵn sàng</div>
+        </div>
+
+        <div class="flow-arrow" id="arrow-2">
+          <div class="arrow-line"></div>
+          <div class="arrow-head">▶</div>
+        </div>
+
+        <!-- Node 3: CUỐI -->
+        <div class="flow-node" id="node-tail" onclick="openStageSetup('tail')">
+          <div class="node-badge">Chặng 3</div>
+          <div class="node-icon">🔍</div>
+          <div class="node-name">CUỐI (Auditor)</div>
+          <div class="node-role">Kiểm toán & Trau chuốt</div>
+          <div class="node-model" id="label-tail-model">groq : openai/gpt-oss-120b</div>
+          <div class="node-status" id="status-tail">Sẵn sàng</div>
+        </div>
+
+        <div class="flow-arrow" id="arrow-3">
+          <div class="arrow-line"></div>
+          <div class="arrow-head">▶</div>
+        </div>
+
+        <!-- Node 4: KẾT QUẢ -->
+        <div class="flow-node node-output" id="node-final">
+          <div class="node-badge">Mục tiêu</div>
+          <div class="node-icon">🎯</div>
+          <div class="node-name">Final Answer</div>
+          <div class="node-role">Xuất bản tối ưu</div>
+          <div class="node-model">Chuẩn Production</div>
+          <div class="node-status" id="status-final">Chờ lệnh</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Failover Live Banner (Hidden by default) -->
+    <div class="failover-alert-banner" id="failoverBanner" style="display: none;">
+      <div class="alert-icon">🚨</div>
+      <div class="alert-content">
+        <div class="alert-title" id="failoverTitle">KÍCH HOẠT QUY TẮC CỨU HỘ KHẨN CẤP: CON SỐNG NHẢY VÀO GÁNH!</div>
+        <div class="alert-desc" id="failoverDesc">Model gốc gặp sự cố, hệ thống đã tự động chuyển giao dữ liệu sang AI còn sống.</div>
+      </div>
+      <div class="alert-badge" id="failoverBadge">Tự Phục Hồi Thành Công</div>
+    </div>
+
+    <!-- Input Section -->
+    <section class="prompt-section">
+      <div class="prompt-header">
+        <label for="promptInput" class="prompt-label">
+          <span class="icon">✍️</span> Nhập yêu cầu / Câu hỏi của bạn vào dây chuyền:
+        </label>
+        <div class="prompt-templates">
+          <span class="template-pill" onclick="setPrompt('Thiết kế kiến trúc hệ thống Chat thời gian thực phục vụ 500,000 người dùng đồng thời (500k CCU).')">💬 500k CCU Chat App</span>
+          <span class="template-pill" onclick="setPrompt('Viết hệ thống Cache đa tầng LRU Memory + Redis bằng Python chuẩn Clean Architecture có unit test.')">⚡ Distributed Cache</span>
+          <span class="template-pill" onclick="setPrompt('So sánh chi tiết Paxos vs Raft: Cơ chế bầu cử Leader, Log Replication và khả năng chịu lỗi.')">🧠 Paxos vs Raft</span>
+        </div>
+      </div>
+
+      <div class="input-wrapper">
+        <textarea id="promptInput" rows="3" placeholder="Nhập bài toán kỹ thuật, ý tưởng kiến trúc hoặc yêu cầu code của bạn..."></textarea>
+        <div class="input-actions">
+          <button class="btn btn-gradient btn-lg" id="btnRunPipeline">
+            <span class="btn-icon">⚡</span> VẬN HÀNH DÂY CHUYỀN
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Execution Telemetry Bar -->
+    <section class="telemetry-bar" id="telemetryBar" style="display: none;">
+      <div class="telemetry-item">
+        <span class="t-label">⏱️ Tổng thời gian:</span>
+        <span class="t-value" id="tLatency">0.00 s</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="t-label">🛡️ Sự cố cứu hộ:</span>
+        <span class="t-value" id="tFailovers">0</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="t-label">📊 Trạng thái:</span>
+        <span class="t-value status-ok" id="tStatus">Hoàn tất</span>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-card">
+      <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('final')">🏁 Final Synthesized Answer</button>
+        <button class="tab-btn" onclick="switchTab('head')">📐 Chặng 1: ĐẦU (Dàn ý)</button>
+        <button class="tab-btn" onclick="switchTab('body')">💻 Chặng 2: THÂN (Mã nguồn)</button>
+        <button class="tab-btn" onclick="switchTab('tail')">🔍 Chặng 3: CUỐI (Kiểm toán)</button>
+        <button class="tab-btn" onclick="switchTab('events')">📜 Nhật ký Cứu Hộ (Events)</button>
+        <div class="tab-tools">
+          <button class="btn btn-secondary btn-sm" id="btnCopyResult" onclick="copyCurrentOutput()">📋 Sao chép</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tabContent">
+        <!-- Content will be injected by JavaScript -->
+        <div class="empty-state" id="emptyPlaceholder">
+          <div class="empty-icon">🚀</div>
+          <div class="empty-title">Sẵn Sàng Tiếp Nhận Yêu Cầu</div>
+          <div class="empty-desc">Nhập prompt ở trên và nhấn "Vận hành dây chuyền" để chứng kiến 3 AI phối hợp nhịp nhàng và tự nhảy vào gánh khi có sự cố.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Cấu hình Chặng -->
+  <div class="modal-backdrop" id="setupModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Cấu Hình Dây Chuyền 3 Chặng</h3>
+        <button class="modal-close" onclick="closeSetupModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Chặng 1: ĐẦU -->
+        <div class="stage-config-row">
+          <div class="row-label">
+            <span class="badge">Chặng 1</span>
+            <strong>ĐẦU (Planner & Architect)</strong>
+          </div>
+          <div class="row-inputs">
+            <select id="cfg-head-provider" onchange="onProviderChange('head')">
+              <option value="groq">GROQ</option>
+              <option value="gemini">GEMINI</option>
+              <option value="openai">OPENAI</option>
+              <option value="anthropic">ANTHROPIC</option>
+            </select>
+            <input type="text" id="cfg-head-model" placeholder="Model ID">
+          </div>
+        </div>
+
+        <!-- Chặng 2: THÂN -->
+        <div class="stage-config-row">
+          <div class="row-label">
+            <span class="badge">Chặng 2</span>
+            <strong>THÂN (Core Implementer)</strong>
+          </div>
+          <div class="row-inputs">
+            <select id="cfg-body-provider" onchange="onProviderChange('body')">
+              <option value="groq">GROQ</option>
+              <option value="gemini">GEMINI</option>
+              <option value="openai">OPENAI</option>
+              <option value="anthropic">ANTHROPIC</option>
+            </select>
+            <input type="text" id="cfg-body-model" placeholder="Model ID">
+          </div>
+        </div>
+
+        <!-- Chặng 3: CUỐI -->
+        <div class="stage-config-row">
+          <div class="row-label">
+            <span class="badge">Chặng 3</span>
+            <strong>CUỐI (Auditor & Polisher)</strong>
+          </div>
+          <div class="row-inputs">
+            <select id="cfg-tail-provider" onchange="onProviderChange('tail')">
+              <option value="groq">GROQ</option>
+              <option value="gemini">GEMINI</option>
+              <option value="openai">OPENAI</option>
+              <option value="anthropic">ANTHROPIC</option>
+            </select>
+            <input type="text" id="cfg-tail-model" placeholder="Model ID">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="resetToDefaultStages()">Khôi phục Mặc định</button>
+        <button class="btn btn-primary" onclick="saveStageConfig()">Lưu Cấu Hình</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

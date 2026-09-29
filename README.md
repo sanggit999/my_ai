@@ -36,6 +36,9 @@ Hệ thống AI CLI và thư viện Python chuyên nghiệp kết nối tới 4 
    - **Mô hình dây chuyền khép kín**: ĐẦU (Kiến trúc & Dàn ý) ➔ THÂN (Triển khai code & nội dung cốt lõi) ➔ CUỐI (Kiểm toán bảo mật, tối ưu & trau chuốt).
    - **Cơ chế "Con nào chết thì con còn sống nhảy vào gánh"**: Bắt lỗi độc lập từng chặng (429 Hết quota, 400 Hết tiền credit, 503 Server quá tải, timeout). Tự động điều động các AI còn sống (Groq, Gemini,...) tiếp quản ngay tức khắc mà không làm gián đoạn dây chuyền.
    - **Tùy biến linh hoạt**: Lệnh `/setup` cho phép cấu hình model cho từng chặng và lưu cấu hình vĩnh viễn trong `config/pipeline_stages.json`. Lệnh `/view` giúp soi chi tiết kết quả từng chặng.
+12. **Phase 11: Hybrid UI/UX — Terminal TUI & Local Web Studio Dashboard** (`ui/tui.py`, `web/`)
+   - **Terminal TUI**: Khung hộp bo góc viền kép, gradient màu sắc, render Markdown có chia khối mã nguồn (Syntax Highlighting) và banner cảnh báo cứu hộ khẩn cấp rực rỡ.
+   - **Local Web Studio Dashboard (`web/`)**: Giao diện SPA Dark Mode Glassmorphism hiện đại tại `http://localhost:8000`, sơ đồ tương tác luồng 3 chặng trực quan, tự động mở trình duyệt qua cờ `python main.py --web` hoặc menu phím 6. Chạy zero-dependency thuần thư viện chuẩn Python!
 
 ---
 
@@ -155,12 +158,27 @@ python main.py
 
 2. **Cách thao tác**:
    - Nhập `5` từ menu chính để vào phòng điều khiển dây chuyền.
-   - **Gõ câu hỏi/prompt bình thường**: Dây chuyền sẽ tự động kích hoạt tuần tự 3 chặng và in tiến độ thời gian thực.
+   - **Gõ câu hỏi/prompt bình thường**: Dây chuyền sẽ tự động kích hoạt tuần tự 3 chặng và in tiến độ thời gian thực với định dạng khung bo góc TUI và màu sắc chuẩn.
    - **Các lệnh điều khiển đặc biệt**:
      - `/setup` : Tùy chỉnh con nào làm ĐẦU, THÂN, CUỐI. Cấu hình sẽ tự lưu vĩnh viễn vào `config/pipeline_stages.json`.
      - `/view`  : Soi chi tiết từng chặng (xem đề cương của ĐẦU, code của THÂN, thẩm định của CUỐI).
      - `/reset` : Khôi phục cài đặt 3 chặng về mặc định ban đầu.
      - `/exit`  : Quay trở lại Menu chính.
+
+---
+
+#### 🌐 Chế độ 6: Mở Web UI Studio Dashboard (Trình duyệt - Phase 11)
+> **Trải nghiệm trực quan đỉnh cao**: Mở giao diện Single Page Application (SPA) trên trình duyệt web, theo dõi sơ đồ luồng thời gian thực.
+
+1. **Cách khởi động**:
+   - **Cách 1 (Nhanh nhất)**: Gõ `python main.py --web` trong terminal.
+   - **Cách 2**: Chạy `python main.py` và chọn phím **`6`**.
+   - Trình duyệt mặc định sẽ tự động mở trang: **`http://localhost:8000`**.
+2. **Tính năng độc quyền trên Web Studio**:
+   - **Sơ đồ luồng tương tác (Interactive Flow Nodes)**: Hiển thị trực quan 3 chặng ĐẦU ➔ THÂN ➔ CUỐI. Khi đang chạy, node sẽ phát sáng (pulse); khi có lỗi, node chớp đỏ và kích hoạt mũi tên cứu hộ vàng rực khi AI còn sống nhảy vào gánh.
+   - **Render Markdown & Code Highlighting**: Hỗ trợ copy code 1-chạm, đọc bảng biểu, danh sách chuyên nghiệp.
+   - **Tabs Soi Chi Tiết**: Chuyển đổi linh hoạt giữa *Final Synthesized Answer*, *Chặng 1 (ĐẦU)*, *Chặng 2 (THÂN)*, *Chặng 3 (CUỐI)* và *Nhật ký cứu hộ (Events Table)*.
+   - **Đổi Model 1-Click**: Click chuột vào từng node trên sơ đồ để mở modal cấu hình đổi AI ngay trên web mà không cần gõ lệnh CLI.
 
 ---
 
@@ -223,6 +241,7 @@ Tất cả các phase đều có script kiểm thử độc lập để bạn x�
 
 | File Kiểm Thử | Mục Tiêu Kiểm Thử | Lệnh Thực Thi |
 | :--- | :--- | :--- |
+| `test_web_server.py` | Kiểm thử khởi động và định tuyến Web Studio Server (Phase 11) | `python test_web_server.py` |
 | `test_phase_10_resilient_pipeline.py` | Kiểm thử Dây chuyền 3 chặng & cơ chế **Con nào chết con sống nhảy vào gánh** | `python test_phase_10_resilient_pipeline.py` |
 | `test_phase_9_1_model_switcher.py` | Kiểm thử Switch model từng API và tính bền bỉ lưu file JSON | `python test_phase_9_1_model_switcher.py` |
 | `test_phase_9_roles.py` | Kiểm thử Hội đồng Chuyên gia và Dây chuyền phân vai | `python test_phase_9_roles.py` |

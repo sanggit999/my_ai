@@ -17,29 +17,37 @@ from cli.selector import CLISelector
 from providers import get_provider
 
 
+from ui.tui import Colors, box, render_markdown, print_failover_alert, print_stage_progress
+
+
 def _print_pipeline_header():
     stages = get_pipeline_stages()
-    print("\n" + "=" * 70)
-    print("   ⛓️ DÂY CHUYỀN 3 CHẶNG TỰ PHỤC HỒI (ACTIVE-SURVIVOR PIPELINE)")
-    print("=" * 70)
-    
     stage_titles = {
         "head": ("Chặng 1: ĐẦU ", "Planner & Architect"),
         "body": ("Chặng 2: THÂN", "Core Implementer"),
         "tail": ("Chặng 3: CUỐI", "Auditor & Polisher"),
     }
     
+    content_lines = []
     for k in ("head", "body", "tail"):
         title, role = stage_titles[k]
         cfg = stages.get(k, {})
         p = cfg.get("provider", "groq")
         m = cfg.get("model", "default")
-        print(f"  [{title}] ➔ {p.upper():<9} : {m:<28} ({role})")
-        
-    print("-" * 70)
-    print("  🛡️ Nguyên tắc: Con nào chết (429/400/503/lỗi) ➔ Con sống nhảy vào gánh!")
-    print("  💡 Lệnh: /setup (Đổi AI từng chặng) | /reset (Mặc định) | /view (Xem từng chặng) | /exit")
-    print("=" * 70 + "\n")
+        content_lines.append(f"• [{title}] ➔ {p.upper():<9} : {m:<28} ({role})")
+
+    content_lines.append("")
+    content_lines.append("🛡️ Nguyên tắc: Con nào chết (429/400/503) ➔ Con sống nhảy vào gánh!")
+    content_lines.append("💡 Lệnh: /setup (Đổi AI chặng) | /view (Soi chi tiết) | /reset | /exit")
+
+    header_box = box(
+        title="⛓️ DÂY CHUYỀN 3 CHẶNG TỰ PHỤC HỒI (ACTIVE-SURVIVOR PIPELINE)",
+        content="\n".join(content_lines),
+        width=74,
+        color=Colors.BRIGHT_CYAN,
+        border_style="round"
+    )
+    print("\n" + header_box + "\n")
 
 
 def _setup_stage_interactive():
@@ -146,37 +154,51 @@ def pipeline_loop():
             print("#" * 70 + "\n")
             continue
             
-        # Callback hiển thị tiến độ thời gian thực
+        # Callback hiển thị tiến độ thời gian thực với TUI
         def status_callback(stage_key: str, stage_name: str, prov: str, status_msg: str):
+            num = "1" if stage_key == "head" else ("2" if stage_key == "body" else "3")
             if status_msg.startswith("STARTING:"):
                 model = status_msg.split(":", 1)[1]
-                print(f"  ⏳ {stage_name}: [{prov.upper()}: {model}] đang xử lý...")
+                print_stage_progress(int(num), stage_name, prov, model, status="running")
             elif status_msg.startswith("SUCCESS:"):
                 model = status_msg.split(":", 1)[1]
-                print(f"  ✅ {stage_name}: [{prov.upper()}: {model}] hoàn tất!")
+                print_stage_progress(int(num), stage_name, prov, model, status="success")
             elif status_msg.startswith("FAILED:"):
                 reason = status_msg.split(":", 1)[1]
-                print(f"  ❌ {stage_name}: [{prov.upper()}] GẶP SỰ CỐ: {reason}")
+                print_stage_progress(int(num), stage_name, prov, reason, status="failed")
             elif status_msg.startswith("FAILOVER_STEP_IN:"):
                 surv_m = status_msg.split(":", 1)[1]
-                print(f"  🚨 CON CÒN SỐNG NHẢY VÀO GÁNH: [{prov.upper()}: {surv_m}] đang tiếp quản!")
-                
-        print("\n⚙️ BẮT ĐẦU VẬN HÀNH DÂY CHUYỀN 3 CHẶNG...")
+                print(f"  {Colors.BOLD}{Colors.BRIGHT_MAGENTA}🚨 CON CÒN SỐNG NHẢY VÀO GÁNH:{Colors.RESET} [{prov.upper()}: {surv_m}] đang tiếp quản chặng!")
+
+        print(f"\n{Colors.BOLD}{Colors.BRIGHT_CYAN}⚙️ BẮT ĐẦU VẬN HÀNH DÂY CHUYỀN 3 CHẶNG...{Colors.RESET}")
         try:
             last_result = pipeline.run(user_input, status_callback=status_callback)
-            
-            print("\n" + "=" * 70)
-            print("🏁 KẾT QUẢ CUỐI CÙNG (FINAL SYNTHESIZED ANSWER)")
-            print("=" * 70)
-            print(last_result.final_content.strip())
-            print("=" * 70)
-            
+
+            # Nếu có failover, thông báo tóm tắt
+            if last_result.failovers_occurred > 0:
+                for st in last_result.stages:
+                    if st.is_failover:
+                        print_failover_alert(
+                            stage_name=st.stage_name,
+                            dead_provider=st.assigned_provider,
+                            dead_model=st.assigned_model,
+                            reason=st.failover_reason or "Sự cố API",
+                            survivor_provider=st.executed_provider,
+                            survivor_model=st.executed_model
+                        )
+
+            print("\n" + "=" * 74)
+            print(f"   {Colors.BOLD}{Colors.BRIGHT_GREEN}🏁 KẾT QUẢ CUỐI CÙNG (FINAL SYNTHESIZED ANSWER){Colors.RESET}")
+            print("=" * 74)
+            print(render_markdown(last_result.final_content.strip()))
+            print("=" * 74)
+
             # Tóm tắt số liệu
-            failover_info = f"🚨 {last_result.failovers_occurred} chặng đã được con sống nhảy vào gánh" if last_result.failovers_occurred > 0 else "✨ Cả 3 chặng mượt mà"
-            print(f"⏱️ Tổng thời gian: {last_result.total_latency_ms/1000:.2f}s | {failover_info} | (Gõ /view để soi chi tiết từng chặng)\n")
-            
+            failover_info = f"{Colors.BRIGHT_MAGENTA}🚨 {last_result.failovers_occurred} chặng đã được con sống nhảy vào gánh{Colors.RESET}" if last_result.failovers_occurred > 0 else f"{Colors.BRIGHT_GREEN}✨ Cả 3 chặng mượt mà{Colors.RESET}"
+            print(f"⏱️ Tổng thời gian: {last_result.total_latency_ms/1000:.2f}s | {failover_info} | (Gõ {Colors.BRIGHT_YELLOW}/view{Colors.RESET} để soi chi tiết từng chặng)\n")
+
         except Exception as e:
-            print(f"\n❌ Lỗi hệ thống dây chuyền: {e}\n")
+            print(f"\n{Colors.BRIGHT_RED}❌ Lỗi hệ thống dây chuyền: {e}{Colors.RESET}\n")
 
 
 if __name__ == "__main__":

@@ -140,6 +140,12 @@ def start_three_stage_pipeline():
     pipeline_loop()
 
 
+def start_web_studio():
+    """Khởi động Local Web UI Studio Dashboard trên trình duyệt (Phase 11)."""
+    from web.server import start_studio_server
+    start_studio_server(port=8000, auto_open=True)
+
+
 def run_phase3_inspection():
     """Chạy kiểm tra và so sánh chuẩn hóa ModelInfo (Phase 3)."""
     from test_model_info import main as test_p3
@@ -147,6 +153,10 @@ def run_phase3_inspection():
 
 
 if __name__ == "__main__":
+    if "--web" in sys.argv:
+        start_web_studio()
+        sys.exit(0)
+
     print_banner()
     load_env_files()
     check_and_display_status()
@@ -160,17 +170,18 @@ if __name__ == "__main__":
             print("  2. 🧠 Multi-Model Orchestration & Synthesis (Phase 8)")
             print("  3. 🎭 Multi-Persona Role Orchestration & Pipeline (Phase 9)")
             print("  4. 🔄 Quản Lý & Chuyển Đổi Model Cho Từng API (Phase 9.1)")
-            print("  5. ⛓️ Dây Chuyền 3 Chặng ĐẦU ➔ THÂN ➔ CUỐI (Tự Phục Hồi - Phase 10)")
-            print("  6. 📋 So sánh Model Catalog chuẩn hóa (Phase 3)")
-            print("  7. 🔍 Kiểm tra trạng thái các Provider & Keys (Phase 1)")
-            print("  8. 🔑 Nhập / Cập nhật API Key trực tiếp")
-            print("  9. ⚡ Test Groq Models & Chat (OpenAI-compatible / Free)")
-            print(" 10. 🌟 Test Google Gemini Models & Chat")
-            print(" 11. 🧠 Test OpenAI Official Models")
-            print(" 12. 🎭 Test Anthropic Claude Models")
+            print("  5. ⛓️ Dây Chuyền 3 Chặng ĐẦU ➔ THÂN ➔ CUỐI (Terminal TUI - Phase 10)")
+            print("  6. 🌐 Mở Web UI Studio Dashboard (Trình duyệt - Phase 11)")
+            print("  7. 📋 So sánh Model Catalog chuẩn hóa (Phase 3)")
+            print("  8. 🔍 Kiểm tra trạng thái các Provider & Keys (Phase 1)")
+            print("  9. 🔑 Nhập / Cập nhật API Key trực tiếp")
+            print(" 10. ⚡ Test Groq Models & Chat (OpenAI-compatible / Free)")
+            print(" 11. 🌟 Test Google Gemini Models & Chat")
+            print(" 12. 🧠 Test OpenAI Official Models")
+            print(" 13. 🎭 Test Anthropic Claude Models")
             print("  0. 🚪 Thoát")
             print("═" * 60)
-            opt = input("👉 Nhập lựa chọn của bạn (0-12): ").strip()
+            opt = input("👉 Nhập lựa chọn của bạn (0-13): ").strip()
 
             if opt == "1":
                 start_interactive_chat()
@@ -183,22 +194,24 @@ if __name__ == "__main__":
             elif opt == "5":
                 start_three_stage_pipeline()
             elif opt == "6":
-                run_phase3_inspection()
+                start_web_studio()
             elif opt == "7":
-                check_and_display_status()
+                run_phase3_inspection()
             elif opt == "8":
-                prompt_set_key()
                 check_and_display_status()
             elif opt == "9":
+                prompt_set_key()
+                check_and_display_status()
+            elif opt == "10":
                 from test_groq_models import main as run_groq_test
                 run_groq_test()
-            elif opt == "10":
+            elif opt == "11":
                 from test_gemini_models import main as run_gemini_test
                 run_gemini_test()
-            elif opt == "11":
+            elif opt == "12":
                 from test_openai_models import main as run_openai_test
                 run_openai_test()
-            elif opt == "12":
+            elif opt == "13":
                 from test_anthropic_models import main as run_anthropic_test
                 run_anthropic_test()
             elif opt in ("0", "exit", "quit"):
